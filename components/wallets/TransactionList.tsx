@@ -1,0 +1,3 @@
+export function TransactionList() {
+  return <section className="terminal-card p-5"><div className="flex items-center justify-between"><h2 className="text-sm font-semibold text-white">Recent transactions</h2><span className="text-xs text-[var(--muted)]">Native activity</span></div><div className="mt-4 space-y-3"><div className="surface-divider pt-3 text-sm text-[var(--muted)]">Live transaction indexing is ready through the chain service abstraction.</div><div className="surface-divider pt-3 text-sm text-[var(--muted)]">Activity data can be sourced from the configured RPC or indexer worker.</div></div></section>
+}

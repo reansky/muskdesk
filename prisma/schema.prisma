@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  xId           String    @unique
+  username      String
+  displayName   String
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  wallets       Wallet[]
+  trackers      Tracker[]
+}
+
+model Wallet {
+  id                   String   @id @default(cuid())
+  userId               String
+  name                 String
+  address              String
+  chain                String
+  encryptedPrivateKey  String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, chain])
+  @@unique([userId, address, chain])
+}
+
+model Tracker {
+  id                       String            @id @default(cuid())
+  userId                   String
+  name                     String
+  walletAddress            String?
+  xUsername                String?
+  chain                    String
+  status                   String            @default("active")
+  notificationsEnabled    Boolean           @default(true)
+  minimumTransactionValue Decimal?          @db.Decimal(24, 8)
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  user                     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities               TrackerActivity[]
+
+  @@index([userId, chain, status])
+}
+
+model TrackerActivity {
+  id              String   @id @default(cuid())
+  trackerId       String
+  tokenId         String?
+  type            String
+  amount          String
+  usdValue        Decimal  @db.Decimal(24, 8)
+  transactionHash String
+  timestamp       DateTime
+  tracker         Tracker  @relation(fields: [trackerId], references: [id], onDelete: Cascade)
+  token           Token?   @relation(fields: [tokenId], references: [id])
+
+  @@index([trackerId, timestamp])
+}
+
+model Token {
+  id           String            @id @default(cuid())
+  chain        String
+  address      String
+  symbol       String
+  name         String
+  price        Decimal           @db.Decimal(24, 8)
+  marketCap    Decimal           @db.Decimal(24, 8)
+  liquidity    Decimal           @db.Decimal(24, 8)
+  volume24h    Decimal           @db.Decimal(24, 8)
+  activities   TrackerActivity[]
+
+  @@unique([chain, address])
+}

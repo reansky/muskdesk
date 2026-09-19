@@ -1,0 +1,8 @@
+import type { ActivityDTO } from "@/types"
+import { CopyButton } from "@/components/ui/CopyButton"
+import { formatCurrency, truncateAddress } from "@/lib/utils"
+
+export function TokenActivityCard({ activity }: { activity: ActivityDTO }) {
+  const token = activity.token
+  return <div className="terminal-card p-4"><div className="flex items-start justify-between"><div><p className="eyebrow">Token activity</p><h2 className="mt-2 text-lg font-semibold text-white">{token.name}</h2><p className="mt-1 text-xs text-[var(--muted)]">${token.symbol}</p></div><span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${activity.type === "BUY" ? "bg-accent/[.1] text-accent" : "bg-red-400/[.1] text-red-300"}`}>{activity.type}</span></div><div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3"><div><p className="text-[10px] text-[var(--muted)]">Price</p><p className="mt-1 text-sm font-semibold text-white">${token.price}</p></div><div><p className="text-[10px] text-[var(--muted)]">Market cap</p><p className="mt-1 text-sm font-semibold text-white">{formatCurrency(token.marketCap, true)}</p></div><div><p className="text-[10px] text-[var(--muted)]">Liquidity</p><p className="mt-1 text-sm font-semibold text-white">{formatCurrency(token.liquidity, true)}</p></div><div><p className="text-[10px] text-[var(--muted)]">24h volume</p><p className="mt-1 text-sm font-semibold text-white">{formatCurrency(token.volume24h, true)}</p></div><div><p className="text-[10px] text-[var(--muted)]">Contract</p><p className="mt-1 font-mono text-xs text-white">{truncateAddress(token.address)}</p></div><div className="flex items-end"><CopyButton value={token.address} /></div></div></div>
+}
